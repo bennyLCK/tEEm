@@ -18,9 +18,27 @@ patients_health_info = {
     "Eugene" : "Allergies : Pollen, Pre-existing conditions : Asthma, Current medications : None"
 }
 
-def get_personal_info(String name):
+def get_personal_info (name):
     return patients_personal_info.get(name)
 
-def get_health_info(String name):
+def get_health_info (name):
     return patients_health_info.get(name)
+
+def post_personal_info(name, info):
+    patients_personal_info[name] = info
+
+def post_health_info(name, info):
+    patients_health_info[name] = info
+
+def put_personal_info(name, info):
+    patients_personal_info.update(name, info)
+
+def put_health_info(name, info):
+    patients_health_info.update(name, info)
+
+def del_personal_info(name):
+    del patients_personal_info[name]
+
+def del_health_info(name):
+    del patients_health_info[name]
 
