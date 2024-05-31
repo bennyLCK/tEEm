@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow import fields, Schema
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@localhost/patient_db'  # PostgreSQL database connection
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
 db = SQLAlchemy(app)
 
 class Patient(db.Model):
@@ -12,9 +12,6 @@ class Patient(db.Model):
     msd_name = db.Column(db.String(150))  # New field for patient's name
     msd_age = db.Column(db.Integer())  # New field for patient's age
     msd_discharge_status = db.Column(db.String(1))  # New field for patient's discharge status
-
-    def __repr__(self):
-        return '<User %r>' % self.username
 
 class PatientSchema(Schema):
     msd_id = fields.Int(data_key='patient_id')
@@ -34,12 +31,14 @@ def create_patient():
     patient = Patient(msd_name=data['name'], msd_age=data['age'], msd_discharge_status=data['discharge_status'])
     db.session.add(patient)
     db.session.commit()
+    print('Patient added successfully')
     return patient_schema.dump(patient), 201
 
 # Read - Get all patients
 @app.route('/patients', methods=['GET'])
 def get_all_patients():
     patients = Patient.query.all()
+    print('Patient(s) returned successfully')
     return patient_schema.dump(patients, many=True)
 
 # Read - Get a specific patient
@@ -48,6 +47,7 @@ def get_patient(patient_id):
     patient = Patient.query.get(patient_id)
     if patient is None:
         return jsonify({'error': 'Patient not found'}), 404
+    print('Patient returned successfully')
     return patient_schema.dump(patient)
 
 # Update - Modify a patient
@@ -61,6 +61,7 @@ def update_patient(patient_id):
     patient.msd_age = data['age']
     patient.msd_discharge_status = data['discharge_status']
     db.session.commit()
+    print('Patient updated successfully')
     return patient_schema.dump(patient), 200
 
 # Delete - Remove a patient
@@ -71,6 +72,7 @@ def delete_patient(patient_id):
         return jsonify({'error': 'Patient not found'}), 404
     db.session.delete(patient)
     db.session.commit()
+    print('Patient deleted successfully')
     return '', 204
 
 if __name__ == '__main__':
